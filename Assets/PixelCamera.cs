@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ public class PixelCamera : MonoBehaviour
     [Header("Components")]
     [SerializeField] private new Camera camera = null;
     [SerializeField] private RawImage rawImage = null;
+    [SerializeField] private ScreenResizeNotifier screenResizeNotifier = null;
 
     [Header("Settings")]
     [SerializeField] private int cameraWidth = 256;
@@ -29,6 +31,19 @@ public class PixelCamera : MonoBehaviour
     private void Start()
     {
         updateTexture = true;
+    }
+
+    private void OnEnable()
+    {
+        if (screenResizeNotifier != null)
+            screenResizeNotifier.screenResized += OnScreenResized;
+    }
+
+
+    private void OnDisable()
+    {
+        if (screenResizeNotifier != null)
+            screenResizeNotifier.screenResized -= OnScreenResized;
     }
 
     private void Update()
@@ -55,4 +70,10 @@ public class PixelCamera : MonoBehaviour
         camera.targetTexture = renderTexture;
         rawImage.texture = renderTexture;
     }
+
+    private void OnScreenResized()
+    {
+        CreateRenderTexture();
+    }
+
 }
